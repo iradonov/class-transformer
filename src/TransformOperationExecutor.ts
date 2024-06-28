@@ -441,7 +441,9 @@ export class TransformOperationExecutor {
       }
     }
 
-    if (isMap) {
+    const wildcardMetadata = defaultMetadataStorage.findWildcardMetadata(target);
+
+    if (isMap || wildcardMetadata) {
       // expose & exclude do not apply for map keys only to fields
       return keys;
     }

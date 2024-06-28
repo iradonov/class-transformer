@@ -8,7 +8,7 @@ import {
   plainToClassFromExist,
 } from '../../src/index';
 import { defaultMetadataStorage } from '../../src/storage';
-import { Exclude, Expose, Type, Transform } from '../../src/decorators';
+import { Exclude, Expose, Type, Transform, Wildcard } from '../../src/decorators';
 
 describe('basic functionality', () => {
   it('should convert instance of the given object to plain javascript object and should expose all properties since its a default behaviour', () => {
@@ -1901,5 +1901,33 @@ describe('basic functionality', () => {
     expect(transformedClass.usersDefined[0].name).toEqual('a-name');
 
     expect(transformedClass.usersUndefined).toBeUndefined();
+  });
+
+  it('should keep properties declared in a wildcard even when excludeExtraneousValues option is true', () => {
+    class User {
+      name: string;
+    }
+
+    class TestClass {
+      @Wildcard()
+      @Type(() => User)
+      _: User;
+    }
+
+    const obj = {
+      user1: { name: 'user1' },
+      user2: { name: 'user2' },
+      user3: { name: 'user3' },
+    };
+
+    const transformedClass: any = plainToInstance(TestClass, obj as Record<string, any>, {
+      excludeExtraneousValues: true,
+    });
+
+    expect(transformedClass).toBeInstanceOf(TestClass);
+
+    expect(transformedClass.user1).toStrictEqual({ name: 'user1' });
+    expect(transformedClass.user2).toStrictEqual({ name: 'user2' });
+    expect(transformedClass.user3).toStrictEqual({ name: 'user3' });
   });
 });

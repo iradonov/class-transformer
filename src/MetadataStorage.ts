@@ -1,5 +1,6 @@
 import { TypeMetadata, ExposeMetadata, ExcludeMetadata, TransformMetadata } from './interfaces';
 import { TransformationType } from './enums';
+import { WildcardMetadata } from './interfaces/metadata/wildcard-metdata.interface';
 
 /**
  * Storage all library metadata.
@@ -13,6 +14,7 @@ export class MetadataStorage {
   private _transformMetadatas = new Map<Function, Map<string, TransformMetadata[]>>();
   private _exposeMetadatas = new Map<Function, Map<string, ExposeMetadata>>();
   private _excludeMetadatas = new Map<Function, Map<string, ExcludeMetadata>>();
+  private _wildcardMetadatas = new Map<Function, WildcardMetadata>();
   private _ancestorsMap = new Map<Function, Function[]>();
 
   // -------------------------------------------------------------------------
@@ -50,6 +52,10 @@ export class MetadataStorage {
     this._excludeMetadatas.get(metadata.target).set(metadata.propertyName, metadata);
   }
 
+  addWildcardMetadata(metadata: WildcardMetadata): void {
+    this._wildcardMetadatas.set(metadata.target, metadata);
+  }
+
   // -------------------------------------------------------------------------
   // Public Methods
   // -------------------------------------------------------------------------
@@ -83,6 +89,10 @@ export class MetadataStorage {
 
   findExposeMetadata(target: Function, propertyName: string): ExposeMetadata {
     return this.findMetadata(this._exposeMetadatas, target, propertyName);
+  }
+
+  findWildcardMetadata(target: Function): WildcardMetadata {
+    return this._wildcardMetadatas.get(target);
   }
 
   findExposeMetadataByCustomName(target: Function, name: string): ExposeMetadata {

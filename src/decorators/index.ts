@@ -5,3 +5,4 @@ export * from './transform-instance-to-plain.decorator';
 export * from './transform-plain-to-instance.decorator';
 export * from './transform.decorator';
 export * from './type.decorator';
+export * from './wildcard.decorator';
